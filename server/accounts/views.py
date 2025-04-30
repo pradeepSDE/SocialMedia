@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from .serializers import RegisterSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from .models import UserProfile
 # Create your views here.
 
 class RegisterView(APIView):
@@ -18,9 +19,10 @@ class RegisterView(APIView):
 class LoginView(APIView):
     def post(self, request):
         # username = request.data.get('username')
-        email = request.data.get('email')
+        # email = request.data.get('email')
         password = request.data.get('password')
-        user = User.objects.filter(email=email).first()
+        mobile = request.data.get('mobile')
+        user = UserProfile.objects.filter(mobile=mobile).first()
         if user and user.check_password(password):
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
@@ -29,6 +31,7 @@ class LoginView(APIView):
                 'access': access_token,
                 'username': user.username,
                 'email': user.email,
+                'mobile': user.profile.mobile,  
             }
             return Response(response_data, status=status.HTTP_200_OK)   
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
