@@ -42,43 +42,45 @@ const Signup = () => {
   };
 
   return (
-    <div className="auth-container">
-      <h2>Sign Up</h2>
-      {error && <div className="error-message">{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={password2}
-          onChange={(e) => setPassword2(e.target.value)}
-          required
-        />
-        <button type="submit">Sign Up</button>
-        <p>
-          Already have an account? <Link to="/login">Login</Link>
-        </p>
-      </form>
+    <div className="auth-page-center">
+      <div className="auth-container">
+        <h2>Sign Up</h2>
+        {error && <div className="error-message">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={password2}
+            onChange={(e) => setPassword2(e.target.value)}
+            required
+          />
+          <button type="submit">Sign Up</button>
+          <p>
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };
