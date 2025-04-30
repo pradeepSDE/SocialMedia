@@ -1,17 +1,16 @@
 import React from "react";
-import { useAuthStore } from "../store/authStore";
 import Navbar from "./Navbar";
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router";
 
 export default function Profile() {
-  const user = useAuthStore((state) => state.user);
-  const clearUser = useAuthStore((state) => state.clearUser);
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   if (!user) return <div>Please log in to view your profile.</div>;
 
   const handleLogout = () => {
-    clearUser();
+    logout();
     navigate("/login");
   };
 

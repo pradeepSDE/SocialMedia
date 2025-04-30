@@ -26,6 +26,14 @@ const Login = () => {
         email: response.email,
         mobile: response.mobile,
       });
+      const user ={
+        id: response.user_id,
+        name: response.username,
+        email: response.email,
+        mobile: response.mobile,
+      }
+      localStorage.setItem("user", JSON.stringify(user));
+
       toast.success("Login successful!", { id: toastId });
       navigate("/dashboard");
     } catch (error) {

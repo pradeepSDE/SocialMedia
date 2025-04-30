@@ -7,10 +7,33 @@ import Connections from "./components/Connections";
 import UserSearch from "./components/UserSearch";
 import Profile from "./components/Profile";
 import Posts from "./components/Posts";
+import { useEffect } from "react";
 
 function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const setUser = useAuthStore((state) => state.setUser);
+  const clearUser = useAuthStore((state) => state.clearUser);
 
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+
+    if (user) {
+      try {
+    
+        setUser({
+          id: user.user_id,
+          name: user.username,
+          email: user.email,
+          mobile: user.mobile,
+        });
+      } catch (err) {
+        console.error("Token decode failed", err);
+        clearUser();
+      }
+    } else {
+      clearUser();
+    }
+  }, []);
   return (
     <div className="app">
       <Routes>
