@@ -15,23 +15,27 @@ class RegisterView(APIView):
             user = serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 class LoginView(APIView):
     def post(self, request):
-        # username = request.data.get('username')
-        # email = request.data.get('email')
         password = request.data.get('password')
         mobile = request.data.get('mobile')
-        user = UserProfile.objects.filter(mobile=mobile).first()
-        if user and user.check_password(password):
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
-            response_data = {
-                'refresh': str(refresh),
-                'access': access_token,
-                'username': user.username,
-                'email': user.email,
-                'mobile': user.profile.mobile,  
-            }
-            return Response(response_data, status=status.HTTP_200_OK)   
+
+        # Retrieve UserProfile based on the mobile number
+        user_profile = UserProfile.objects.filter(mobile=mobile).first()
+
+        # If a user profile is found, access the associated User and check the password
+        if user_profile:
+            user = user_profile.user  # Access the User instance associated with the UserProfile
+            if user.check_password(password):  # Check password on the User model
+                refresh = RefreshToken.for_user(user)
+                access_token = str(refresh.access_token)
+                response_data = {
+                    'refresh': str(refresh),
+                    'access': access_token,
+                    'username': user.username,
+                    'email': user.email,
+                    'mobile': user_profile.mobile,  # Use user_profile to get mobile
+                }
+                return Response(response_data, status=status.HTTP_200_OK)
+
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)

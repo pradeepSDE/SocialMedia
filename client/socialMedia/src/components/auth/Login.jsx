@@ -6,7 +6,7 @@ import { useAuthStore } from "../../store/authStore";
 import { toast } from "react-hot-toast";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,11 +19,12 @@ const Login = () => {
     setLoading(true);
     const toastId = toast.loading("Logging in...");
     try {
-      const response = await authService.login({ email, password });
+      const response = await authService.login({ mobile, password });
       setUser({
         id: response.user_id,
         name: response.username,
         email: response.email,
+        mobile: response.mobile,
       });
       toast.success("Login successful!", { id: toastId });
       navigate("/dashboard");
@@ -44,10 +45,10 @@ const Login = () => {
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Mobile Number"
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
             required
             disabled={loading}
           />

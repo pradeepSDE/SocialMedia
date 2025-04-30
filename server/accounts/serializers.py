@@ -20,7 +20,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         if UserProfile.objects.filter(mobile=data['mobile']).exists():
             raise serializers.ValidationError({"mobile": "Mobile number already registered"})
         return data
-
+  
     def create(self, validated_data):
         password = validated_data.pop('password')
         validated_data.pop('password2')

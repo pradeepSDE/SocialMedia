@@ -12,6 +12,7 @@ const Signup = () => {
   const [password2, setPassword2] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mobile, setMobile] = useState("");
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
 
@@ -34,6 +35,7 @@ const Signup = () => {
         email,
         password,
         password2,
+        mobile,
       });
       setUser({
         id: response.user_id,
@@ -64,6 +66,14 @@ const Signup = () => {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
+            disabled={loading}
+          />
+          <input
+            type="text"
+            placeholder="Mobile Number"
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
             required
             disabled={loading}
           />
