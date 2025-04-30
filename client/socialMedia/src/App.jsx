@@ -7,6 +7,7 @@ import Connections from "./components/Connections";
 import UserSearch from "./components/UserSearch";
 import Profile from "./components/Profile";
 import Posts from "./components/Posts";
+import UserProfile from "./components/UserProfile";
 import { useEffect } from "react";
 
 function App() {
@@ -19,7 +20,6 @@ function App() {
 
     if (user) {
       try {
-    
         setUser({
           id: user.user_id,
           name: user.username,
@@ -64,6 +64,10 @@ function App() {
         <Route
           path="/posts"
           element={isAuthenticated ? <Posts /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/user/:userId"
+          element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />}
         />
         <Route
           path="/"

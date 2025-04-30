@@ -8,6 +8,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import UserProfile, Connection, Post
 from rest_framework import generics, permissions
 from django.db.models import Q, Case, When, Value, IntegerField
+from rest_framework.permissions import IsAuthenticated
+
 # Create your views here.
 
 
@@ -115,3 +117,38 @@ class UserSearchView(APIView):
             for u in users
         ]
         return Response(data)
+
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+
+        is_connected = Connection.objects.filter(
+            from_user=request.user, to_user=user).exists()
+        my_connections = set(Connection.objects.filter(
+            from_user=request.user).values_list('to_user', flat=True))
+        their_connections = set(Connection.objects.filter(
+            from_user=user).values_list('to_user', flat=True))
+        mutual_ids = my_connections & their_connections
+        mutual_users = User.objects.filter(id__in=mutual_ids)
+        other_ids = their_connections - mutual_ids
+        other_users = User.objects.filter(id__in=other_ids)
+
+        return Response({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "mobile": getattr(user.profile, 'mobile', ''),
+            "is_connected": is_connected,
+            "mutual_connections": [
+                {"id": u.id, "username": u.username} for u in mutual_users
+            ],
+            "other_connections": [
+                {"id": u.id, "username": u.username} for u in other_users
+            ]
+        })

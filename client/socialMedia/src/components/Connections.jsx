@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
+import { useNavigate } from "react-router";
 
 export default function Connections() {
   const [connections, setConnections] = useState([]);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -71,7 +73,11 @@ export default function Connections() {
                 minWidth: 120,
                 textAlign: "center",
                 boxShadow: "0 2px 8px #0001",
+                cursor: "pointer",
               }}
+              onClick={() => navigate(`/user/${conn.to_user_id}`)}
+              role="button"
+              tabIndex={0}
             >
               <div style={{ fontWeight: 600 }}>{conn.to_user}</div>
               <div style={{ fontSize: 12, color: "#888" }}>
@@ -94,11 +100,18 @@ export default function Connections() {
         </form>
         <ul>
           {results.map((user) => (
-            <li key={user.id}>
+            <li
+              key={user.id}
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate(`/user/${user.id}`)}
+            >
               {user.username} ({user.email}, {user.mobile})
               <button
                 style={{ marginLeft: 8 }}
-                onClick={() => handleConnect(user.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleConnect(user.id);
+                }}
               >
                 Connect
               </button>
