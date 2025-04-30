@@ -3,10 +3,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from .serializers import RegisterSerializer, ConnectionSerializer
+from .serializers import RegisterSerializer, ConnectionSerializer, PostSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import UserProfile, Connection
+from .models import UserProfile, Connection, Post
 from rest_framework import generics, permissions
+from django.db.models import Q
 # Create your views here.
 
 
@@ -54,3 +55,19 @@ class ConnectionListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(from_user=self.request.user)
+
+
+class PostListCreateView(generics.ListCreateAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Post.objects.filter(
+            Q(audience='public') |
+            Q(audience='connections', user__connections_received__from_user=user) |
+            Q(user=user)
+        ).distinct().order_by('-created')
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

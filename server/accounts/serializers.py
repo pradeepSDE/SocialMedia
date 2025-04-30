@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 # import your profile model and Connection model
-from accounts.models import UserProfile, Connection
+from accounts.models import UserProfile, Connection, Post
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -42,3 +42,10 @@ class ConnectionSerializer(serializers.ModelSerializer):
         model = Connection
         fields = ['id', 'from_user', 'to_user', 'created']
         read_only_fields = ['from_user', 'created']
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['id', 'user', 'text', 'image', 'audience', 'created']
+        read_only_fields = ['user', 'created']
