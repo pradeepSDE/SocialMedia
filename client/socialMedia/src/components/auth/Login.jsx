@@ -1,20 +1,36 @@
-import React, { useState } from 'react'
-import './auth.css'
-import { Link } from 'react-router'
+import React, { useState } from "react";
+import "./auth.css";
+import { Link, useNavigate } from "react-router";
+import { authService } from "../../services/authService";
+import { useAuthStore } from "../../store/authStore";
 
 const Login = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser);
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('Login Details:', { email, password })
-    // Add your login logic here (API call, validation, etc.)
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      const response = await authService.login({ email, password });
+      setUser({
+        id: response.user_id,
+        name: response.username,
+        email: response.email,
+      });
+      navigate("/dashboard");
+    } catch (error) {
+      setError(error.error || "Login failed. Please try again.");
+    }
+  };
 
   return (
     <div className="auth-container">
       <h2>Login</h2>
+      {error && <div className="error-message">{error}</div>}
       <form onSubmit={handleSubmit}>
         <input
           type="email"
@@ -36,7 +52,7 @@ const Login = () => {
         </p>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
