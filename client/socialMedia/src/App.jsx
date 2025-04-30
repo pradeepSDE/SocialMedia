@@ -5,6 +5,7 @@ import Signup from "./components/auth/Signup.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import Connections from "./components/Connections";
 import UserSearch from "./components/UserSearch";
+import Profile from "./components/Profile";
 
 function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -31,6 +32,10 @@ function App() {
         <Route
           path="/user-search"
           element={isAuthenticated ? <UserSearch /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/profile"
+          element={isAuthenticated ? <Profile /> : <Navigate to="/login" />}
         />
         <Route
           path="/"
