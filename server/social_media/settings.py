@@ -32,6 +32,9 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+ALLOWED_HOSTS = ['*']
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -82,21 +85,11 @@ WSGI_APPLICATION = 'social_media.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get(
+            'DATABASE_URL', f'sqlite:///{BASE_DIR}/db.sqlite3')
+    )
 }
-
-
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.environ.get('DATABASE_URL'),
-#         conn_max_age=600,
-#         ssl_require=True
-#     )
-# }
-
 
 
 # Password validation

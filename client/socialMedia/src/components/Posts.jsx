@@ -93,7 +93,11 @@ export default function Posts() {
             <div>{post.text}</div>
             {post.image && (
               <img
-                src={post.image}
+                src={
+                  post.image.startsWith("http")
+                    ? post.image
+                    : `http://localhost:8000${post.image}`
+                }
                 alt="post"
                 style={{ maxWidth: 200, marginTop: 8 }}
               />
