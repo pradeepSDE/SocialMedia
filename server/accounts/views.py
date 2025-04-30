@@ -7,7 +7,7 @@ from .serializers import RegisterSerializer, ConnectionSerializer, PostSerialize
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import UserProfile, Connection, Post
 from rest_framework import generics, permissions
-from django.db.models import Q
+from django.db.models import Q, Case, When, Value, IntegerField
 # Create your views here.
 
 
@@ -53,6 +53,19 @@ class ConnectionListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         return Connection.objects.filter(from_user=self.request.user)
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        data = [
+            {
+                'id': conn.id,
+                'to_user': conn.to_user.username,
+                'to_user_id': conn.to_user.id,
+                'created': conn.created,
+            }
+            for conn in queryset
+        ]
+        return Response(data)
+
     def perform_create(self, serializer):
         serializer.save(from_user=self.request.user)
 
@@ -71,3 +84,34 @@ class PostListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class UserSearchView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        query = request.GET.get('q', '')
+        user = request.user
+        connections = Connection.objects.filter(
+            from_user=user).values_list('to_user', flat=True)
+        users = User.objects.annotate(
+            is_connected=Case(
+                When(id__in=connections, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            )
+        ).filter(
+            Q(username__icontains=query) | Q(email__icontains=query) | Q(
+                profile__mobile__icontains=query)
+        ).order_by('-is_connected', 'username')
+        data = [
+            {
+                'id': u.id,
+                'username': u.username,
+                'email': u.email,
+                'mobile': u.profile.mobile if hasattr(u, 'profile') else '',
+                'is_connected': u.is_connected
+            }
+            for u in users
+        ]
+        return Response(data)
