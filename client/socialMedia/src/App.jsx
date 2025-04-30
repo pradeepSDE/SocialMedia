@@ -3,6 +3,8 @@ import { useAuthStore } from "./store/authStore";
 import Login from "./components/auth/Login.jsx";
 import Signup from "./components/auth/Signup.jsx";
 import Dashboard from "./components/Dashboard.jsx";
+import Connections from "./components/Connections";
+import UserSearch from "./components/UserSearch";
 
 function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -21,6 +23,14 @@ function App() {
         <Route
           path="/dashboard"
           element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/connections"
+          element={isAuthenticated ? <Connections /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/user-search"
+          element={isAuthenticated ? <UserSearch /> : <Navigate to="/login" />}
         />
         <Route
           path="/"

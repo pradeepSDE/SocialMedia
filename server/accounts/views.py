@@ -3,10 +3,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, ConnectionSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import UserProfile
+from .models import UserProfile, Connection
+from rest_framework import generics, permissions
 # Create your views here.
+
 
 class RegisterView(APIView):
     def post(self, request):
@@ -15,6 +17,8 @@ class RegisterView(APIView):
             user = serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class LoginView(APIView):
     def post(self, request):
         password = request.data.get('password')
@@ -39,3 +43,14 @@ class LoginView(APIView):
                 return Response(response_data, status=status.HTTP_200_OK)
 
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class ConnectionListCreateView(generics.ListCreateAPIView):
+    serializer_class = ConnectionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Connection.objects.filter(from_user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(from_user=self.request.user)
