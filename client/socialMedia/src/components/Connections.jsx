@@ -51,11 +51,35 @@ export default function Connections() {
       <Navbar />
       <div style={{ maxWidth: 600, margin: "40px auto" }}>
         <h2>Your Connections</h2>
-        <ul>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 16,
+            marginBottom: 32,
+          }}
+        >
+          {connections.length === 0 && <div>No connections yet.</div>}
           {connections.map((conn) => (
-            <li key={conn.id}>{conn.to_user}</li>
+            <div
+              key={conn.id}
+              style={{
+                background: "#f4f6f8",
+                border: "1px solid #ddd",
+                borderRadius: 8,
+                padding: 16,
+                minWidth: 120,
+                textAlign: "center",
+                boxShadow: "0 2px 8px #0001",
+              }}
+            >
+              <div style={{ fontWeight: 600 }}>{conn.to_user}</div>
+              <div style={{ fontSize: 12, color: "#888" }}>
+                User ID: {conn.to_user_id}
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
         <h2>Find Users</h2>
         <form onSubmit={handleSearch} style={{ marginBottom: 16 }}>
           <input
