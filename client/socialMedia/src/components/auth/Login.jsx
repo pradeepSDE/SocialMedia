@@ -3,17 +3,21 @@ import "./auth.css";
 import { Link, useNavigate } from "react-router";
 import { authService } from "../../services/authService";
 import { useAuthStore } from "../../store/authStore";
+import { toast } from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
+    const toastId = toast.loading("Logging in...");
     try {
       const response = await authService.login({ email, password });
       setUser({
@@ -21,9 +25,15 @@ const Login = () => {
         name: response.username,
         email: response.email,
       });
+      toast.success("Login successful!", { id: toastId });
       navigate("/dashboard");
     } catch (error) {
       setError(error.error || "Login failed. Please try again.");
+      toast.error(error.error || "Login failed. Please try again.", {
+        id: toastId,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,6 +49,7 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={loading}
           />
           <input
             type="password"
@@ -46,8 +57,11 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loading}
           />
-          <button type="submit">Login</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
           <p>
             Don't have an account? <Link to="/signup">Sign Up</Link>
           </p>
