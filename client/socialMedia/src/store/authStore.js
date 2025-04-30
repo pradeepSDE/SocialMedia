@@ -1,29 +1,43 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
-type User = {
-  id: string
-  name: string
-  email: string
-}
+const getInitialAuthState = () => {
+  const token = localStorage.getItem("access_token");
+  if (!token) return { user: null, isAuthenticated: false };
 
-type AuthState = {
-  user: User | null
-  isAuthenticated: boolean
-  setUser: (user: User) => void
-  clearUser: () => void
-}
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  isAuthenticated: false,
-  setUser: (user) =>
-    set({
-      user,
+    const userData = JSON.parse(jsonPayload);
+    return {
+      user: {
+        id: userData.user_id,
+        name: userData.username,
+        email: userData.email,
+      },
       isAuthenticated: true,
-    }),
-  clearUser: () =>
-    set({
-      user: null,
-      isAuthenticated: false,
-    }),
-}))
+    };
+  } catch (error) {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    return { user: null, isAuthenticated: false };
+  }
+};
+
+export const useAuthStore = create((set) => ({
+  ...getInitialAuthState(),
+  setUser: (user) => set({ user, isAuthenticated: true }),
+  clearUser: () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    set({ user: null, isAuthenticated: false });
+  },
+}));

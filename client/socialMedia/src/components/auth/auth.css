@@ -70,3 +70,13 @@ body {
     text-decoration: underline;
   }
   
+  .auth-container .error-message {
+    color: #dc2626;
+    background-color: #fee2e2;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 14px;
+  }
+  
