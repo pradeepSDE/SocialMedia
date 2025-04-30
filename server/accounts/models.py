@@ -23,3 +23,19 @@ class Connection(models.Model):
 
     def __str__(self):
         return f"{self.from_user.username} -> {self.to_user.username}"
+
+
+class Post(models.Model):
+    AUDIENCE_CHOICES = [
+        ('public', 'Public'),
+        ('connections', 'Connections'),
+        ('private', 'Private'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    image = models.ImageField(upload_to='posts/', blank=True, null=True)
+    audience = models.CharField(max_length=20, choices=AUDIENCE_CHOICES)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Post by {self.user.username} ({self.audience})"
