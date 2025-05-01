@@ -9,6 +9,10 @@ import Profile from "./components/Profile";
 import Posts from "./components/Posts";
 import UserProfile from "./components/UserProfile";
 import { useEffect } from "react";
+import axios from "axios";
+
+
+axios.defaults.baseURL = "https://socialmedia-kgvn.onrender.com/api/";
 
 function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);

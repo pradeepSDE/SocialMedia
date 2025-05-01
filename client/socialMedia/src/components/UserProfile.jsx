@@ -10,7 +10,7 @@ export default function UserProfile() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/api/user-profile/${userId}/`, {
+      .get(`/user-profile/${userId}/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -23,7 +23,7 @@ export default function UserProfile() {
 
   const handleConnect = async () => {
     await axios.post(
-      "http://localhost:8000/api/connections/",
+      "/connections/",
       { to_user: userId },
       {
         headers: {

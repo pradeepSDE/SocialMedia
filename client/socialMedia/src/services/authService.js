@@ -1,17 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/api";
-
-// Create axios instance with default config
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
 // Add request interceptor to include token
-api.interceptors.request.use(
+axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("access_token");
     if (token) {
@@ -27,7 +17,7 @@ api.interceptors.request.use(
 export const authService = {
   async register(userData) {
     try {
-      const response = await api.post("/register/", userData);
+      const response = await axios.post("/register/", userData);
       return response.data;
     } catch (error) {
       throw error.response.data;
@@ -36,7 +26,7 @@ export const authService = {
 
   async login(credentials) {
     try {
-      const response = await api.post("/login/", credentials);
+      const response = await axios.post("/login/", credentials);
       // Store tokens in localStorage
       localStorage.setItem("access_token", response.data.access);
       localStorage.setItem("refresh_token", response.data.refresh);
@@ -76,7 +66,7 @@ export const authService = {
       const refreshToken = localStorage.getItem("refresh_token");
       if (!refreshToken) throw new Error("No refresh token available");
 
-      const response = await api.post("/token/refresh/", {
+      const response = await axios.post("/token/refresh/", {
         refresh: refreshToken,
       });
 

@@ -10,7 +10,7 @@ export default function Posts() {
   const [posts, setPosts] = useState([]);
 
   const fetchPosts = async () => {
-    const res = await axios.get("http://localhost:8000/api/posts/", {
+    const res = await axios.get("/posts/", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -29,7 +29,7 @@ export default function Posts() {
     formData.append("text", text);
     if (image) formData.append("image", image);
     formData.append("audience", audience);
-    await axios.post("http://localhost:8000/api/posts/", formData, {
+    await axios.post("/posts/", formData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         "Content-Type": "multipart/form-data",
@@ -96,7 +96,7 @@ export default function Posts() {
                 src={
                   post.image.startsWith("http")
                     ? post.image
-                    : `http://localhost:8000${post.image}`
+                    : `https://socialmedia-kgvn.onrender.com${post.image}`
                 }
                 alt="post"
                 style={{ maxWidth: 200, marginTop: 8 }}

@@ -8,7 +8,7 @@ export default function UserSearch() {
   const handleSearch = async (e) => {
     e.preventDefault();
     const res = await axios.get(
-      `http://localhost:8000/api/user-search/?q=${encodeURIComponent(query)}`,
+      `/user-search/?q=${encodeURIComponent(query)}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -20,7 +20,7 @@ export default function UserSearch() {
 
   const handleConnect = async (to_user) => {
     await axios.post(
-      "http://localhost:8000/api/connections/",
+      "/connections/",
       { to_user },
       {
         headers: {
