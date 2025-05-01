@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./auth.css";
 import { Link, useNavigate } from "react-router";
 import { authService } from "../../services/authService";
-import { useAuthStore } from "../../store/authStore";
+import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-hot-toast";
 
 const Login = () => {
@@ -11,7 +11,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const setUser = useAuthStore((state) => state.setUser);
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,20 +20,16 @@ const Login = () => {
     const toastId = toast.loading("Logging in...");
     try {
       const response = await authService.login({ mobile, password });
-      setUser({
+      const userData = {
         id: response.user_id,
         name: response.username,
         email: response.email,
         mobile: response.mobile,
+      };
+      login(userData, {
+        access: response.access,
+        refresh: response.refresh,
       });
-      const user ={
-        id: response.user_id,
-        name: response.username,
-        email: response.email,
-        mobile: response.mobile,
-      }
-      localStorage.setItem("user", JSON.stringify(user));
-
       toast.success("Login successful!", { id: toastId });
       navigate("/dashboard");
     } catch (error) {

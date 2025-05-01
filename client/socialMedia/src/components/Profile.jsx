@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "./Navbar";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
   const { user, logout } = useAuth();
@@ -9,8 +9,8 @@ export default function Profile() {
 
   if (!user) return <div>Please log in to view your profile.</div>;
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/login");
   };
 

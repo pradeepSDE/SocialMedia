@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./auth.css";
 import { Link, useNavigate } from "react-router";
 import { authService } from "../../services/authService";
-import { useAuthStore } from "../../store/authStore";
+import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-hot-toast";
 
 const Signup = () => {
@@ -14,7 +14,7 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [mobile, setMobile] = useState("");
   const navigate = useNavigate();
-  const setUser = useAuthStore((state) => state.setUser);
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,10 +37,15 @@ const Signup = () => {
         password2,
         mobile,
       });
-      setUser({
+      const userData = {
         id: response.user_id,
         name: response.username,
         email: response.email,
+        mobile: response.mobile,
+      };
+      login(userData, {
+        access: response.access,
+        refresh: response.refresh,
       });
       toast.success("Registration successful!", { id: toastId });
       navigate("/dashboard");
