@@ -9,11 +9,19 @@ import Posts from "./components/Posts";
 import UserProfile from "./components/UserProfile";
 import axios from "axios";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { useEffect } from "react";
+import { authService } from "./services/authService.js";
 
 axios.defaults.baseURL = "https://socialmedia-kgvn.onrender.com/api/";
+// axios.defaults.baseURL = "http://localhost:8000/api/";
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
+  useEffect(() => {
+    authService.initialize();
+    authService.refreshToken().catch(() => {}); // Optional: force refresh on first load
+  }, []);
+  
 
   return (
     <Routes>
