@@ -59,25 +59,32 @@ class LoginView(APIView):
 
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-
 class ConnectionListCreateView(generics.ListCreateAPIView):
     serializer_class = ConnectionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Connection.objects.filter(from_user=self.request.user)
+        # Include both sent and received connections
+        return Connection.objects.filter(from_user=self.request.user) | Connection.objects.filter(to_user=self.request.user)
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        data = [
-            {
+        data = []
+
+        for conn in queryset:
+            # Always show the *other* user as to_user
+            if conn.from_user == request.user:
+                other_user = conn.to_user
+            else:
+                other_user = conn.from_user
+
+            data.append({
                 'id': conn.id,
-                'to_user': conn.to_user.username,
-                'to_user_id': conn.to_user.id,
+                'to_user': other_user.username,
+                'to_user_id': other_user.id,
                 'created': conn.created,
-            }
-            for conn in queryset
-        ]
+            })
+
         return Response(data)
 
     def perform_create(self, serializer):
